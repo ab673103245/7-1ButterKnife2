@@ -1,0 +1,79 @@
+package qianfeng.a7_1butterknife2;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+/**
+ * Created by Administrator on 2016/10/8 0008.
+ */
+public class MyFragment extends Fragment {
+
+    @BindView(R.id.tv1)
+    TextView tv1;
+
+    @BindViews({R.id.tv2,R.id.tv3,R.id.tv4})
+    List<TextView> tvs;
+
+    String[] texts = new String[]{"tv1","tv2","tv3"};
+
+    int[] colors = new int[]{Color.RED,Color.GREEN,Color.BLUE};
+
+
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fg_layout, container, false);
+
+        ButterKnife.bind(this,view); // 这行最重要！
+
+        tv1.setText("111111111111111");
+
+        // 批量修改之Action
+        ButterKnife.Action<View> SETTEXT = new ButterKnife.Action<View>() {
+            @Override
+            public void apply(@NonNull View view, int index) {
+                ((TextView) view).setText(texts[index]);
+            }
+        };
+
+        ButterKnife.apply(tvs,SETTEXT);
+
+        // 批量修改之Setter
+        ButterKnife.Setter<View,int[]> SETTEXTCOLOR = new ButterKnife.Setter<View, int[]>() {
+            @Override
+            public void set(@NonNull View view, int[] value, int index) {
+                ((TextView) view).setTextColor(value[index]);
+            }
+        };
+
+        ButterKnife.apply(tvs,SETTEXTCOLOR,colors);
+
+        return view;
+    }
+
+    // 使用注解处理Fragment里面的点击事件，直接在Fragment中处理,不用findViewById
+    @OnClick(R.id.btn)
+    public void btnClick3(View view) // 这里的方法名和btn里面设置的onClick的属性名并没有什么关系,fg_laoyut的button里面的onClick属性，甚至可以不写
+    {
+        tv1.setText("3333333333333333");
+        Toast.makeText(getActivity(), "btn", Toast.LENGTH_SHORT).show();
+    }
+
+}
